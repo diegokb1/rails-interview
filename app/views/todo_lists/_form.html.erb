@@ -1,0 +1,14 @@
+<% if todo_list.errors.any? %>
+  <ul>
+    <% todo_list.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= form_with model: todo_list do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name, required: true %>
+
+  <%= f.submit %>
+<% end %>
