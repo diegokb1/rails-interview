@@ -1,3 +1,8 @@
-<%= link_to 'Back', todo_list_path(@todo_list) %>
+<h1 class="h3 mb-3">Edit Item</h1>
 
 <%= render 'form', todo_list: @todo_list, todo_item: @todo_item %>
+
+<div class="d-flex gap-2 mt-3">
+  <%= submit_tag 'Update Item', form: 'todo-item-form', class: 'btn btn-primary btn-sm' %>
+  <%= link_to 'Back', todo_list_path(@todo_list), class: 'btn btn-outline-secondary btn-sm' %>
+</div>

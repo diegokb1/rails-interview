@@ -1,3 +1,8 @@
-<%= link_to 'Back', todo_lists_path %>
+<h1 class="h3 mb-3">New Todo List</h1>
 
 <%= render 'form', todo_list: @todo_list %>
+
+<div class="d-flex gap-2 mt-3">
+  <%= submit_tag 'Create Todo List', form: 'todo-list-form', class: 'btn btn-primary btn-sm' %>
+  <%= link_to 'Back', todo_lists_path, class: 'btn btn-outline-secondary btn-sm' %>
+</div>

@@ -1,9 +1,16 @@
-<%= link_to 'Add Todo List', new_todo_list_path %>
-
-<div>
-  <% @todo_lists.each do |todo_list| %>
-    <div>
-      #<%= todo_list.id %> | <%= link_to todo_list.name, todo_list_path(todo_list) %> | <%= link_to 'Edit', edit_todo_list_path(todo_list) %> | <%= link_to 'Delete', todo_list_path(todo_list), data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this list?' } %>
-    </div>
-  <% end %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3">Todo Lists</h1>
+  <%= link_to 'New List', new_todo_list_path, class: 'btn btn-primary' %>
 </div>
+
+<ul class="list-group">
+  <% @todo_lists.each do |todo_list| %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <%= link_to "##{todo_list.id} #{todo_list.name}", todo_list_path(todo_list) %>
+      <div class="btn-group btn-group-sm">
+        <%= link_to 'Edit', edit_todo_list_path(todo_list), class: 'btn btn-outline-secondary' %>
+        <%= link_to 'Delete', todo_list_path(todo_list), class: 'btn btn-outline-danger', data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this list?' } %>
+      </div>
+    </li>
+  <% end %>
+</ul>

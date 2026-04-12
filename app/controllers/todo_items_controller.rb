@@ -33,7 +33,7 @@ class TodoItemsController < ApplicationController
         render :edit, status: :unprocessable_entity
       end
     else
-      @todo_item.update(completed: true)
+      @todo_item.update(completed: !@todo_item.completed)
       redirect_to todo_list_path(@todo_list)
     end
   end
