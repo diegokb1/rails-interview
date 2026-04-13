@@ -45,7 +45,11 @@ class TodoListsController < ApplicationController
   def destroy
     @todo_list = TodoList.find(params[:id])
     @todo_list.destroy
-    redirect_to todo_lists_path
+    
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@todo_list) }
+      format.html { redirect_to todo_lists_path }
+    end
   end
 
   private

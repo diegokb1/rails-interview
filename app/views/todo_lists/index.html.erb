@@ -5,7 +5,7 @@
 
 <ul class="list-group">
   <% @todo_lists.each do |todo_list| %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <li id="todo_list_<%= todo_list.id %>" class="list-group-item d-flex justify-content-between align-items-center">
       <%= link_to "##{todo_list.id} #{todo_list.name}", todo_list_path(todo_list) %>
       <div class="btn-group btn-group-sm">
         <%= link_to 'Edit', edit_todo_list_path(todo_list), class: 'btn btn-outline-secondary' %>

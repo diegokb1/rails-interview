@@ -34,7 +34,10 @@ class TodoItemsController < ApplicationController
       end
     else
       @todo_item.update(completed: !@todo_item.completed)
-      redirect_to todo_list_path(@todo_list)
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@todo_item) }
+        format.html { redirect_to todo_lists_path(@todo_list) }
+      end
     end
   end
 
@@ -42,7 +45,11 @@ class TodoItemsController < ApplicationController
   def destroy
     @todo_item = @todo_list.todo_items.find(params[:id])
     @todo_item.destroy
-    redirect_to todo_list_path(@todo_list)
+    
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@todo_item) }
+      format.html { redirect_to todo_lists_path(@todo_list) }
+    end
   end
 
   private
