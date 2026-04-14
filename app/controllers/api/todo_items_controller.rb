@@ -67,7 +67,7 @@ module Api
       todo_list = TodoList.find_by(id: params[:todo_list_id])
       if todo_list
         @list_item = todo_list.todo_items.find_by(id: params[:id])
-        if @list_item.destroy
+        if @list_item&.destroy
           render json: { success: "Todo list item deleted" }, status: :ok
         else
           return render json: { error: "Todo list item not found" }, status: :not_found

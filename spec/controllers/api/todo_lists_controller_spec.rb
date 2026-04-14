@@ -4,7 +4,7 @@ describe Api::TodoListsController do
   render_views
 
   describe 'GET index' do
-    let!(:todo_list) { TodoList.create(name: 'Setup RoR project') }
+    let!(:todo_list) { FactoryBot.create(:todo_list, name: 'Setup RoR project') }
 
     context 'when format is HTML' do
       it 'raises a routing error' do
