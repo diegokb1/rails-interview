@@ -1,4 +1,7 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
+  mount Sidekiq::Web => "/sidekiq"
   root "todo_lists#index"
   namespace :api do
     resources :todo_lists, only: %i[index], path: :todolists do
