@@ -36,10 +36,21 @@ class TodoItemsController < ApplicationController
       end
     else
       @todo_item.update(completed: !@todo_item.completed)
+      TodoItems::SyncUpdateService.call(@todo_item)
       respond_to do |format|
         format.turbo_stream { render turbo_stream: turbo_stream.replace(@todo_item) }
         format.html { redirect_to todo_lists_path(@todo_list) }
       end
+    end
+  end
+
+  # POST /todolists/:todo_list_id/todoitems/complete_all
+  def complete_all
+    @todo_list.todo_items.update_all(completed: true)
+    TodoItems::SyncBulkUpdateService(@todo_list.reload.todo_items)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to todo_list_path(@todo_list) }
     end
   end
 

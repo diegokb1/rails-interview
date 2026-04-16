@@ -1,8 +1,16 @@
 <h1 class="h3 mb-3"><%= @todo_list.name %></h1>
 
-<ul class="list-group mb-3">
-  <%= render @todo_list.todo_items %>
-</ul>
+<%= button_to "Complete all",
+      complete_all_todo_list_todo_items_path(@todo_list),
+      method: :post,
+      class: "btn btn-success btn-sm mb-3",
+      data: { turbo_confirm: "Are you sure you want to complete #{@todo_list.todo_items.count} tasks?" } %>
+
+<div id="todo_items">
+  <ul class="list-group mb-3">
+    <%= render @todo_list.todo_items %>
+  </ul>
+</div>
 
 <div class="d-flex gap-2">
   <%= link_to 'Add Item', new_todo_list_todo_item_path(@todo_list), class: 'btn btn-primary btn-sm' %>

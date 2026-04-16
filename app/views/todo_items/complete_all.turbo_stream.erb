@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "todo_items" do %>
+  <div id="todo_items">
+    <ul class="list-group mb-3">
+      <%= render @todo_list.todo_items.reload %>
+    </ul>
+  </div>
+<% end %>
