@@ -18,14 +18,14 @@ RSpec.describe SyncCreateListService do
   before { todo_item }
 
   describe '.call' do
-    it 'enqueues a CreateTodoListJob' do
-      expect { SyncCreateListService.call(todo_list) }.to have_enqueued_job(CreateTodoListJob)
+    it 'enqueues a TodoLists::CreateJob' do
+      expect { SyncCreateListService.call(todo_list) }.to have_enqueued_job(TodoLists::CreateJob)
     end
 
     it 'enqueues the job with the correct payload' do
       SyncCreateListService.call(todo_list)
 
-      expect(CreateTodoListJob).to have_been_enqueued.with(hash_including(expected_payload))
+      expect(TodoLists::CreateJob).to have_been_enqueued.with(hash_including(expected_payload))
     end
   end
 end

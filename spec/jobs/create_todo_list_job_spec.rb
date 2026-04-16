@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateTodoListJob, type: :job do
+RSpec.describe TodoLists::CreateJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:todo_list) { FactoryBot.create(:todo_list) }
@@ -15,17 +15,17 @@ RSpec.describe CreateTodoListJob, type: :job do
 
   describe '#perform' do
     it 'is queued on the default queue' do
-      expect(CreateTodoListJob.new.queue_name).to eq('default')
+      expect(TodoLists::CreateJob.new.queue_name).to eq('default')
     end
 
     it 'can be enqueued' do
-      expect { CreateTodoListJob.perform_later(json_list) }.to have_enqueued_job(CreateTodoListJob)
+      expect { TodoLists::CreateJob.perform_later(json_list) }.to have_enqueued_job(TodoLists::CreateJob)
     end
 
     it 'is enqueued with the correct arguments' do
-      CreateTodoListJob.perform_later(json_list)
+      TodoLists::CreateJob.perform_later(json_list)
 
-      expect(CreateTodoListJob).to have_been_enqueued.with(json_list)
+      expect(TodoLists::CreateJob).to have_been_enqueued.with(json_list)
     end
 
     context 'when the API call succeeds' do
@@ -33,12 +33,12 @@ RSpec.describe CreateTodoListJob, type: :job do
 
       it 'calls ApiClient.create with the correct arguments' do
         expect(ApiClient).to receive(:create).with(json_list)
-        CreateTodoListJob.perform_now(json_list)
+        TodoLists::CreateJob.perform_now(json_list)
       end
 
       it 'does not log an error' do
         expect(logger_double).not_to receive(:error)
-        CreateTodoListJob.perform_now(json_list)
+        TodoLists::CreateJob.perform_now(json_list)
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe CreateTodoListJob, type: :job do
 
       it 'logs an error' do
         expect(logger_double).to receive(:error)
-        CreateTodoListJob.perform_now(json_list)
+        TodoLists::CreateJob.perform_now(json_list)
       end
     end
   end
