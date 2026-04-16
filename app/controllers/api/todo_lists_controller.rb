@@ -23,6 +23,7 @@ module Api
 
       render json: @todo_list.as_json(include: :todo_items), status: :created
     rescue ActiveRecord::RecordInvalid => e
+      logger.error "List creation failed with params #{@todo_list.attributes.inspect} - error: #{e}"
       render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
     end
 
@@ -34,6 +35,7 @@ module Api
         if todo_list.update(todo_list_params)
           render json: todo_list, status: :ok
         else
+          logger.error "List edit failed with params #{todo_list.attributes.inspect} - error: #{todo_list.errors.full_messages}"
           render json: { error: todo_list.errors.full_messages }, status: :unprocessable_entity
         end
       else
@@ -49,6 +51,7 @@ module Api
         todo_list.destroy
         render json: { success: "Todo list deleted" }, status: :ok
       else
+        logger.error "Could not delete list with id #{params[:id]} - record not found"
         render json: { error: "Todo list not found" }, status: :not_found
       end
     end

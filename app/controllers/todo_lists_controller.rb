@@ -18,6 +18,7 @@ class TodoListsController < ApplicationController
     @todo_list = TodoList.new(todo_list_params)
 
     if @todo_list.save
+      SyncCreateListService.call(@todo_list)
       redirect_to todo_list_path(@todo_list)
     else
       render :new, status: :unprocessable_entity
@@ -36,6 +37,7 @@ class TodoListsController < ApplicationController
     @todo_list = TodoList.find(params[:id])
 
     if @todo_list.update(todo_list_params)
+      SyncUpdateListService.call(@todo_list)
       redirect_to todo_list_path(@todo_list)
     else
       render :edit, status: :unprocessable_entity
@@ -45,7 +47,7 @@ class TodoListsController < ApplicationController
   def destroy
     @todo_list = TodoList.find(params[:id])
     @todo_list.destroy
-    
+    SyncDeleteListService.call(@todo_list.id)
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@todo_list) }
       format.html { redirect_to todo_lists_path }
