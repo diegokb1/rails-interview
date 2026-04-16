@@ -14,6 +14,10 @@ module ApiClient
       delete("/todo_lists/#{id}", headers: headers)
     end
 
+    def self.get_all_lists
+      get("/todo_lists")
+    end
+
     def self.create_item(list_id, params)
       post("/todo_lists/#{list_id}/todo_items", body: params.to_json, headers: headers)
     end                                                                                                                                                                                 
