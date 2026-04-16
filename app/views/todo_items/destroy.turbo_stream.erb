@@ -1,0 +1,8 @@
+<%= turbo_stream.remove(@todo_item) %>
+
+<% if @todo_list.todo_items.none? %>
+  <%= turbo_stream.update "complete_all_button", "" %>
+  <%= turbo_stream.update "todo_items" do %>
+    <p class="text-muted mb-3">No tasks listed</p>
+  <% end %>
+<% end %>

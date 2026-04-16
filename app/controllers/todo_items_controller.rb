@@ -62,7 +62,7 @@ class TodoItemsController < ApplicationController
     TodoItems::SyncDeleteService.call(@todo_item.todo_list.id, @todo_item.id)
     
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@todo_item) }
+      format.turbo_stream
       format.html { redirect_to todo_lists_path(@todo_list) }
     end
   end
