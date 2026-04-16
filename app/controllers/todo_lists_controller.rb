@@ -19,7 +19,7 @@ class TodoListsController < ApplicationController
 
     if @todo_list.save
       SyncCreateListService.call(@todo_list)
-      redirect_to todo_list_path(@todo_list)
+      redirect_to todo_list_path(@todo_list), notice: "List created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -38,7 +38,7 @@ class TodoListsController < ApplicationController
 
     if @todo_list.update(todo_list_params)
       SyncUpdateListService.call(@todo_list)
-      redirect_to todo_list_path(@todo_list)
+      redirect_to todo_list_path(@todo_list), notice: "List updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -49,8 +49,8 @@ class TodoListsController < ApplicationController
     @todo_list.destroy
     SyncDeleteListService.call(@todo_list.id)
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@todo_list) }
-      format.html { redirect_to todo_lists_path }
+      format.turbo_stream
+      format.html { redirect_to todo_lists_path, notice: "List deleted successfully." }
     end
   end
 

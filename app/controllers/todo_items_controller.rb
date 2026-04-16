@@ -12,7 +12,7 @@ class TodoItemsController < ApplicationController
 
     if @todo_item.save
       TodoItems::SyncCreateService.call(@todo_item)
-      redirect_to todo_list_path(@todo_list)
+      redirect_to todo_list_path(@todo_list), notice: "Task created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class TodoItemsController < ApplicationController
     if params[:todo_item]
       if @todo_item.update(todo_item_params)
         TodoItems::SyncUpdateService.call(@todo_item)
-        redirect_to todo_list_path(@todo_list)
+        redirect_to todo_list_path(@todo_list), notice: "Task updated successfully."
       else
         render :edit, status: :unprocessable_entity
       end

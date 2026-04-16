@@ -18,6 +18,9 @@
     </nav>
 
     <div class="container">
+      <div id="flash_messages">
+        <%= render "shared/flash" %>
+      </div>
       <%= yield %>
     </div>
   </body>
