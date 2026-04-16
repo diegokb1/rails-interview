@@ -3,7 +3,7 @@ module TodoItems
     queue_as :default
 
     def perform(*args)
-      logger.info "--------Starting Todo Item update sync----------"
+      Rails.logger.info "--------Starting Todo Item update sync----------"
       list_id = args.first
       item_id = args.second
       params = args.last
@@ -11,7 +11,7 @@ module TodoItems
       if response.status == 200
         TodoItem.find(item_id).update(last_synced: DateTime.now)
       else
-        logger.error "Item update sync failed with params #{params} - error: #{response.errors}"
+        Rails.logger.error "Item update sync failed with params #{params} - error: #{response.errors}"
       end
     end
   end

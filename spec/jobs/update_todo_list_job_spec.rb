@@ -7,7 +7,7 @@ RSpec.describe UpdateTodoListJob, type: :job do
   let(:params) { { name: todo_list.name } }
   let(:logger_double) { double('logger', info: nil, error: nil) }
 
-  before { allow_any_instance_of(described_class).to receive(:logger).and_return(logger_double) }
+  before { allow(Rails).to receive(:logger).and_return(logger_double) }
 
   describe '#perform' do
     it 'is queued on the default queue' do

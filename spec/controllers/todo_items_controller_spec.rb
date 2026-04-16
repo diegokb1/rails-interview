@@ -145,6 +145,38 @@ describe TodoItemsController do
     end
   end
 
+  describe 'POST complete_all' do
+    let!(:todo_item) { FactoryBot.create(:todo_item, todo_list: @todo_list, completed: false) }
+
+    context 'when the parent todo list exists' do
+      it 'marks all items as completed' do
+        expect {
+          post :complete_all, params: { todo_list_id: @todo_list.id }, format: :html
+        }.to change { todo_item.reload.completed }.from(false).to(true)
+      end
+
+      it 'redirects to the parent list' do
+        post :complete_all, params: { todo_list_id: @todo_list.id }, format: :html
+
+        expect(response).to redirect_to(todo_list_path(@todo_list))
+      end
+
+      it 'responds with turbo_stream' do
+        post :complete_all, params: { todo_list_id: @todo_list.id }, format: :turbo_stream
+
+        expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      end
+    end
+
+    context 'when the parent todo list does not exist' do
+      it 'raises a record not found error' do
+        expect {
+          post :complete_all, params: { todo_list_id: 0 }, format: :html
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
   describe 'DELETE destroy' do
     let!(:todo_item) { FactoryBot.create(:todo_item, todo_list: @todo_list) }
 

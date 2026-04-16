@@ -37,7 +37,7 @@ module Api
         if new_item.save
           render json: new_item
         else
-          logger.error "Item creation failed with params #{new_item.attributes.inspect} - error: #{new_item.errors.full_messages}"
+          Rails.logger.error "Item creation failed with params #{new_item.attributes.inspect} - error: #{new_item.errors.full_messages}"
 
           return render json: { error: new_item.errors.full_messages }, status: :unprocessable_entity
         end
@@ -54,7 +54,7 @@ module Api
           if list_item.update(todo_item_params)
           render json: list_item
         else
-          logger.error "Item update failed with params #{list_item.attributes.inspect} - error: #{list_item.errors.full_messages}"
+          Rails.logger.error "Item update failed with params #{list_item.attributes.inspect} - error: #{list_item.errors.full_messages}"
           return render json: { error: list_item.errors.full_messages }, status: :unprocessable_entity
         end
         else
@@ -73,7 +73,7 @@ module Api
         if @list_item&.destroy
           render json: { success: "Todo list item deleted" }, status: :ok
         else
-          logger.error "Item deletion failed with params - record not found"
+          Rails.logger.error "Item deletion failed with params - record not found"
           return render json: { error: "Todo list item not found" }, status: :not_found
         end
         
