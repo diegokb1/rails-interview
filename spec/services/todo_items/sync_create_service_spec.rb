@@ -11,16 +11,20 @@ RSpec.describe TodoItems::SyncCreateService do
       expect { TodoItems::SyncCreateService.call(todo_item) }.to have_enqueued_job(TodoItems::CreateJob)
     end
 
-    it 'enqueues the job with the item payload including source_id' do
+    it 'enqueues the job with the list id and item payload including source_id' do
       TodoItems::SyncCreateService.call(todo_item)
 
-      expect(TodoItems::CreateJob).to have_been_enqueued.with(hash_including('source_id' => 'dk-sys'))
+      expect(TodoItems::CreateJob).to have_been_enqueued.with(
+        todo_list.id,
+        hash_including('source_id' => 'dk-sys')
+      )
     end
 
     it 'enqueues the job with the correct item attributes' do
       TodoItems::SyncCreateService.call(todo_item)
 
       expect(TodoItems::CreateJob).to have_been_enqueued.with(
+        todo_list.id,
         hash_including(
           'description' => todo_item.description,
           'completed'   => todo_item.completed

@@ -11,6 +11,7 @@ class TodoItemsController < ApplicationController
     @todo_item = @todo_list.todo_items.new(todo_item_params)
 
     if @todo_item.save
+      TodoItems::SyncCreateService.call(@todo_item)
       redirect_to todo_list_path(@todo_list)
     else
       render :new, status: :unprocessable_entity
@@ -28,6 +29,7 @@ class TodoItemsController < ApplicationController
 
     if params[:todo_item]
       if @todo_item.update(todo_item_params)
+        TodoItems::SyncUpdateService.call(@todo_item)
         redirect_to todo_list_path(@todo_list)
       else
         render :edit, status: :unprocessable_entity
@@ -45,6 +47,8 @@ class TodoItemsController < ApplicationController
   def destroy
     @todo_item = @todo_list.todo_items.find(params[:id])
     @todo_item.destroy
+
+    TodoItems::SyncDeleteService.call(@todo_item.todo_list.id, @todo_item.id)
     
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.remove(@todo_item) }
