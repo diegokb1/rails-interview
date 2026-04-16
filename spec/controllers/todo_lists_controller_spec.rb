@@ -28,6 +28,12 @@ describe TodoListsController do
 
         expect(response).to redirect_to(todo_list_path(TodoList.last))
       end
+
+      it 'calls SyncCreateListService' do
+        expect(SyncCreateListService).to receive(:call).with(an_instance_of(TodoList))
+
+        post :create, params: { todo_list: { name: 'Groceries' } }
+      end
     end
 
     context 'without a name' do
@@ -41,6 +47,12 @@ describe TodoListsController do
         post :create, params: { todo_list: { name: '' } }
 
         expect(response).to render_template(:new)
+      end
+
+      it 'does not call SyncCreateListService' do
+        expect(SyncCreateListService).not_to receive(:call)
+
+        post :create, params: { todo_list: { name: '' } }
       end
     end
   end
@@ -89,6 +101,12 @@ describe TodoListsController do
 
           expect(response).to redirect_to(todo_list_path(@todo_list))
         end
+
+        it 'calls SyncUpdateListService' do
+          expect(SyncUpdateListService).to receive(:call).with(@todo_list)
+
+          patch :update, params: { id: @todo_list.id, todo_list: { name: 'Updated' } }
+        end
       end
 
       context 'without a name' do
@@ -102,6 +120,12 @@ describe TodoListsController do
           patch :update, params: { id: @todo_list.id, todo_list: { name: '' } }
 
           expect(response).to render_template(:edit)
+        end
+
+        it 'does not call SyncUpdateListService' do
+          expect(SyncUpdateListService).not_to receive(:call)
+
+          patch :update, params: { id: @todo_list.id, todo_list: { name: '' } }
         end
       end
     end
@@ -121,6 +145,12 @@ describe TodoListsController do
         delete :destroy, params: { id: @todo_list.id }, format: :html
 
         expect(response).to redirect_to(todo_lists_path)
+      end
+
+      it 'calls SyncDeleteListService' do
+        expect(SyncDeleteListService).to receive(:call).with(@todo_list.id)
+
+        delete :destroy, params: { id: @todo_list.id }, format: :html
       end
     end
 

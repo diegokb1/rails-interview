@@ -19,9 +19,10 @@ describe Api::TodoListsController do
 
       aggregate_failures 'includes the id and name' do
         expect(todo_lists.count).to eq(1)
-        expect(todo_lists[0].keys).to match_array(['id', 'name'])
+        expect(todo_lists[0].keys).to match_array(['id', 'name', 'last_synced'])
         expect(todo_lists[0]['id']).to eq(todo_list.id)
         expect(todo_lists[0]['name']).to eq(todo_list.name)
+        expect(todo_lists[0]['last_synced']).to eq(todo_list.last_synced)
       end
     end
   end

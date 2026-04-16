@@ -3,26 +3,53 @@ require 'rails_helper'
 RSpec.describe UpdateTodoListJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:list_id) { 1 }
-  let(:list_name) { 'My Todo List' }
+  let(:todo_list) { FactoryBot.create(:todo_list) }
+  let(:params) { { name: todo_list.name } }
+  let(:logger_double) { double('logger', info: nil, error: nil) }
+
+  before { allow_any_instance_of(described_class).to receive(:logger).and_return(logger_double) }
 
   describe '#perform' do
     it 'is queued on the default queue' do
       expect(UpdateTodoListJob.new.queue_name).to eq('default')
     end
 
-    it 'executes without raising an error' do
-      expect { UpdateTodoListJob.perform_now(list_id, list_name) }.not_to raise_error
-    end
-
     it 'can be enqueued' do
-      expect { UpdateTodoListJob.perform_later(list_id, list_name) }.to have_enqueued_job(UpdateTodoListJob)
+      expect { UpdateTodoListJob.perform_later(todo_list.id, params) }.to have_enqueued_job(UpdateTodoListJob)
     end
 
     it 'is enqueued with the correct arguments' do
-      UpdateTodoListJob.perform_later(list_id, list_name)
+      UpdateTodoListJob.perform_later(todo_list.id, params)
 
-      expect(UpdateTodoListJob).to have_been_enqueued.with(list_id, list_name)
+      expect(UpdateTodoListJob).to have_been_enqueued.with(todo_list.id, params)
+    end
+
+    context 'when the API call succeeds' do
+      before { allow(ApiClient).to receive(:update).and_return(double(status: 200)) }
+
+      it 'calls ApiClient.update with the correct arguments' do
+        expect(ApiClient).to receive(:update).with(todo_list.id, params.to_json)
+        UpdateTodoListJob.perform_now(todo_list.id, params)
+      end
+
+      it 'updates last_synced on the todo list' do
+        expect { UpdateTodoListJob.perform_now(todo_list.id, params) }
+          .to change { todo_list.reload.last_synced }.from(nil)
+      end
+    end
+
+    context 'when the API call fails' do
+      before { allow(ApiClient).to receive(:update).and_return(double(status: 500, errors: 'Internal Server Error')) }
+
+      it 'logs an error' do
+        expect(logger_double).to receive(:error)
+        UpdateTodoListJob.perform_now(todo_list.id, params)
+      end
+
+      it 'does not update last_synced' do
+        expect { UpdateTodoListJob.perform_now(todo_list.id, params) }
+          .not_to change { todo_list.reload.last_synced }
+      end
     end
   end
 end
