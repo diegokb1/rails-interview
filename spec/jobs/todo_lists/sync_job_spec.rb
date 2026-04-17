@@ -20,7 +20,7 @@ RSpec.describe TodoLists::SyncJob, type: :job do
       before { FactoryBot.create(:todo_list, last_synced: (TodoList::STALE_LIMIT - 1.day).ago) }
 
       it 'does not call the API' do
-        expect(ApiClient).not_to receive(:get_all_lists)
+        expect(ApiClient::Lists).not_to receive(:get_all)
         TodoLists::SyncJob.perform_now
       end
     end
@@ -54,7 +54,7 @@ RSpec.describe TodoLists::SyncJob, type: :job do
       let(:failed_response)     { double(success?: false, code: 500) }
 
       context 'when the API call fails' do
-        before { allow(ApiClient).to receive(:get_all_lists).and_return(failed_response) }
+        before { allow(ApiClient::Lists).to receive(:get_all).and_return(failed_response) }
 
         it 'logs an error' do
           expect(logger_double).to receive(:error)
@@ -68,7 +68,7 @@ RSpec.describe TodoLists::SyncJob, type: :job do
       end
 
       context 'when the API call succeeds' do
-        before { allow(ApiClient).to receive(:get_all_lists).and_return(successful_response) }
+        before { allow(ApiClient::Lists).to receive(:get_all).and_return(successful_response) }
 
         it 'updates local list attributes from external data' do
           TodoLists::SyncJob.perform_now

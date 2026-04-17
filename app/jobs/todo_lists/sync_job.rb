@@ -8,7 +8,7 @@ module TodoLists
       stale_lists = TodoList.where("last_synced < ? OR last_synced IS NULL", TodoList::STALE_LIMIT.ago)
       return if stale_lists.empty?
 
-      response = ApiClient.get_all_lists
+      response = ApiClient::Lists.get_all
       unless response.success?
         Rails.logger.error "Failed to fetch external lists: #{response.code}"
         return

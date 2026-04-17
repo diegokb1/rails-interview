@@ -26,10 +26,10 @@ RSpec.describe TodoItems::DeleteJob, type: :job do
     end
 
     context 'when the API call succeeds' do
-      before { allow(ApiClient).to receive(:destroy_item).and_return(double(status: 200)) }
+      before { allow(ApiClient::Items).to receive(:destroy).and_return(double(status: 200)) }
 
       it 'calls ApiClient.destroy_item with the correct arguments' do
-        expect(ApiClient).to receive(:destroy_item).with(list_id, item_id)
+        expect(ApiClient::Items).to receive(:destroy).with(list_id, item_id)
         TodoItems::DeleteJob.perform_now(list_id, item_id)
       end
 
@@ -40,7 +40,7 @@ RSpec.describe TodoItems::DeleteJob, type: :job do
     end
 
     context 'when the API call fails' do
-      before { allow(ApiClient).to receive(:destroy_item).and_return(double(status: 500, errors: 'Internal Server Error')) }
+      before { allow(ApiClient::Items).to receive(:destroy).and_return(double(status: 500, errors: 'Internal Server Error')) }
 
       it 'logs an error' do
         expect(logger_double).to receive(:error)

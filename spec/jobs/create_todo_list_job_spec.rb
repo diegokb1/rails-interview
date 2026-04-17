@@ -29,10 +29,10 @@ RSpec.describe TodoLists::CreateJob, type: :job do
     end
 
     context 'when the API call succeeds' do
-      before { allow(ApiClient).to receive(:create).and_return(double(status: 200)) }
+      before { allow(ApiClient::Lists).to receive(:create).and_return(double(status: 200)) }
 
       it 'calls ApiClient.create with the correct arguments' do
-        expect(ApiClient).to receive(:create).with(json_list)
+        expect(ApiClient::Lists).to receive(:create).with(json_list)
         TodoLists::CreateJob.perform_now(json_list)
       end
 
@@ -43,7 +43,7 @@ RSpec.describe TodoLists::CreateJob, type: :job do
     end
 
     context 'when the API call fails' do
-      before { allow(ApiClient).to receive(:create).and_return(double(status: 500, errors: 'Internal Server Error')) }
+      before { allow(ApiClient::Lists).to receive(:create).and_return(double(status: 500, errors: 'Internal Server Error')) }
 
       it 'logs an error' do
         expect(logger_double).to receive(:error)

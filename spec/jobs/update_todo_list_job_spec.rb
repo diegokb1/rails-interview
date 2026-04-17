@@ -25,10 +25,10 @@ RSpec.describe TodoLists::UpdateJob, type: :job do
     end
 
     context 'when the API call succeeds' do
-      before { allow(ApiClient).to receive(:update).and_return(double(status: 200)) }
+      before { allow(ApiClient::Lists).to receive(:update).and_return(double(status: 200)) }
 
       it 'calls ApiClient.update with the correct arguments' do
-        expect(ApiClient).to receive(:update).with(todo_list.id, params.to_json)
+        expect(ApiClient::Lists).to receive(:update).with(todo_list.id, params.to_json)
         TodoLists::UpdateJob.perform_now(todo_list.id, params)
       end
 
@@ -39,7 +39,7 @@ RSpec.describe TodoLists::UpdateJob, type: :job do
     end
 
     context 'when the API call fails' do
-      before { allow(ApiClient).to receive(:update).and_return(double(status: 500, errors: 'Internal Server Error')) }
+      before { allow(ApiClient::Lists).to receive(:update).and_return(double(status: 500, errors: 'Internal Server Error')) }
 
       it 'logs an error' do
         expect(logger_double).to receive(:error)
