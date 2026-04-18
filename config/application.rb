@@ -12,6 +12,7 @@ module RailsInterview
     config.load_defaults 7.0
     config.active_job.queue_adapter = :sidekiq
     config.autoload_paths << Rails.root.join("lib")
+    config.exceptions_app = self.routes
 
     # Configuration for the application, engines, and railties goes here.
     #
