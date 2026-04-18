@@ -29,7 +29,7 @@ module Api
 
     # PATCH/PUT /api/todolists/:id
     def update
-      todo_list = TodoList.find_by(id: params[:id])
+      todo_list = TodoList.find_by(external_id: params[:id])
 
       if todo_list
         if todo_list.update(todo_list_params)
@@ -45,7 +45,7 @@ module Api
 
     # DELETE /api/todolists/:id
     def destroy
-      todo_list = TodoList.find_by(id: params[:id])
+      todo_list = TodoList.find_by(external_id: params[:id])
 
       if todo_list
         todo_list.destroy

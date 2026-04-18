@@ -15,7 +15,7 @@ RSpec.describe TodoItems::SyncCreateService do
       TodoItems::SyncCreateService.call(todo_item)
 
       expect(TodoItems::CreateJob).to have_been_enqueued.with(
-        todo_list.id,
+        todo_list.external_id,
         hash_including('source_id' => 'dk-sys')
       )
     end
@@ -24,7 +24,7 @@ RSpec.describe TodoItems::SyncCreateService do
       TodoItems::SyncCreateService.call(todo_item)
 
       expect(TodoItems::CreateJob).to have_been_enqueued.with(
-        todo_list.id,
+        todo_list.external_id,
         hash_including(
           'description' => todo_item.description,
           'completed'   => todo_item.completed

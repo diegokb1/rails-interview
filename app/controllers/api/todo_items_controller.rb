@@ -4,7 +4,7 @@ module Api
   
     # GET /api/todoitems
     def index
-      todo_list = TodoList.find_by(id: params[:todo_list_id])
+      todo_list = TodoList.find_by(external_id: params[:todo_list_id])
       if todo_list
         @list_items = todo_list.todo_items
         render json: @list_items
@@ -15,9 +15,9 @@ module Api
     end
 
     def show
-      todo_list = TodoList.find_by(id: params[:todo_list_id])
+      todo_list = TodoList.find_by(external_id: params[:todo_list_id])
       if todo_list
-        @list_item = todo_list.todo_items.find_by(id: params[:id])
+        @list_item = todo_list.todo_items.find_by(external_id: params[:id])
         if @list_item
           render json: @list_item
         else
@@ -31,7 +31,7 @@ module Api
     end
 
     def create
-      todo_list = TodoList.find_by(id: params[:todo_list_id])
+      todo_list = TodoList.find_by(external_id: params[:todo_list_id])
       if todo_list
         new_item = todo_list.todo_items.create(todo_item_params)
         if new_item.save
@@ -47,9 +47,9 @@ module Api
     end
 
     def update
-      todo_list = TodoList.find_by(id: params[:todo_list_id])
+      todo_list = TodoList.find_by(external_id: params[:todo_list_id])
       if todo_list
-        list_item = todo_list.todo_items.find_by(id: params[:id])
+        list_item = todo_list.todo_items.find_by(external_id: params[:id])
         if list_item
           if list_item.update(todo_item_params)
           render json: list_item
@@ -67,9 +67,9 @@ module Api
     end
 
     def destroy
-      todo_list = TodoList.find_by(id: params[:todo_list_id])
+      todo_list = TodoList.find_by(external_id: params[:todo_list_id])
       if todo_list
-        @list_item = todo_list.todo_items.find_by(id: params[:id])
+        @list_item = todo_list.todo_items.find_by(external_id: params[:id])
         if @list_item&.destroy
           render json: { success: "Todo list item deleted" }, status: :ok
         else
@@ -84,7 +84,7 @@ module Api
     end
 
     def complete_all
-      todo_list = TodoList.find_by(id: params[:todo_list_id])
+      todo_list = TodoList.find_by(external_id: params[:todo_list_id])
       if todo_list
         todo_list.todo_items.each do |item|
           item.update(completed: true)

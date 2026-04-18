@@ -12,13 +12,13 @@ describe Api::TodoItemsController do
       let!(:todo_item) { FactoryBot.create(:todo_item, todo_list: @todo_list) }
 
       it 'returns a success code' do
-        get :index, params: { todo_list_id: @todo_list.id }, format: :json
+        get :index, params: { todo_list_id: @todo_list.external_id }, format: :json
 
         expect(response.status).to eq(200)
       end
 
       it 'returns the items belonging to the list' do
-        get :index, params: { todo_list_id: @todo_list.id }, format: :json
+        get :index, params: { todo_list_id: @todo_list.external_id }, format: :json
 
         items = JSON.parse(response.body)
 
@@ -54,13 +54,13 @@ describe Api::TodoItemsController do
 
     context 'when the parent todo list exists and the item exists' do
       it 'returns a success code' do
-        get :show, params: { todo_list_id: @todo_list.id, id: todo_item.id }, format: :json
+        get :show, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id }, format: :json
 
         expect(response.status).to eq(200)
       end
 
       it 'returns the item' do
-        get :show, params: { todo_list_id: @todo_list.id, id: todo_item.id }, format: :json
+        get :show, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id }, format: :json
 
         item = JSON.parse(response.body)
 
@@ -75,13 +75,13 @@ describe Api::TodoItemsController do
 
     context 'when the parent todo list does not exist' do
       it 'returns a 404 status' do
-        get :show, params: { todo_list_id: 0, id: todo_item.id }, format: :json
+        get :show, params: { todo_list_id: 0, id: todo_item.external_id }, format: :json
 
         expect(response.status).to eq(404)
       end
 
       it 'returns an error message' do
-        get :show, params: { todo_list_id: 0, id: todo_item.id }, format: :json
+        get :show, params: { todo_list_id: 0, id: todo_item.external_id }, format: :json
 
         body = JSON.parse(response.body)
 
@@ -91,13 +91,13 @@ describe Api::TodoItemsController do
 
     context 'when the item does not exist' do
       it 'returns a 404 status' do
-        get :show, params: { todo_list_id: @todo_list.id, id: 0 }, format: :json
+        get :show, params: { todo_list_id: @todo_list.external_id, id: 0 }, format: :json
 
         expect(response.status).to eq(404)
       end
 
       it 'returns an error message' do
-        get :show, params: { todo_list_id: @todo_list.id, id: 0 }, format: :json
+        get :show, params: { todo_list_id: @todo_list.external_id, id: 0 }, format: :json
 
         body = JSON.parse(response.body)
 
@@ -110,13 +110,13 @@ describe Api::TodoItemsController do
     context 'when the parent todo list exists' do
       context 'with valid params' do
         it 'returns a success code' do
-          post :create, params: { todo_list_id: @todo_list.id, todo_item: { description: 'Buy milk' } }, format: :json
+          post :create, params: { todo_list_id: @todo_list.external_id, todo_item: { description: 'Buy milk' } }, format: :json
 
           expect(response.status).to eq(200)
         end
 
         it 'creates and returns the new item' do
-          post :create, params: { todo_list_id: @todo_list.id, todo_item: { description: 'Buy milk' } }, format: :json
+          post :create, params: { todo_list_id: @todo_list.external_id, todo_item: { description: 'Buy milk' } }, format: :json
 
           item = JSON.parse(response.body)
 
@@ -130,13 +130,13 @@ describe Api::TodoItemsController do
 
       context 'without a description' do
         it 'returns a 422 status' do
-          post :create, params: { todo_list_id: @todo_list.id, todo_item: { description: '' } }, format: :json
+          post :create, params: { todo_list_id: @todo_list.external_id, todo_item: { description: '' } }, format: :json
 
           expect(response.status).to eq(422)
         end
 
         it 'returns validation errors' do
-          post :create, params: { todo_list_id: @todo_list.id, todo_item: { description: '' } }, format: :json
+          post :create, params: { todo_list_id: @todo_list.external_id, todo_item: { description: '' } }, format: :json
 
           body = JSON.parse(response.body)
 
@@ -168,13 +168,13 @@ describe Api::TodoItemsController do
     context 'when the parent todo list exists and the item exists' do
       context 'with valid params' do
         it 'returns a success code' do
-          put :update, params: { todo_list_id: @todo_list.id, id: todo_item.id, todo_item: { description: 'Updated' } }, format: :json
+          put :update, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id, todo_item: { description: 'Updated' } }, format: :json
 
           expect(response.status).to eq(200)
         end
 
         it 'returns the updated item' do
-          put :update, params: { todo_list_id: @todo_list.id, id: todo_item.id, todo_item: { description: 'Updated' } }, format: :json
+          put :update, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id, todo_item: { description: 'Updated' } }, format: :json
 
           item = JSON.parse(response.body)
 
@@ -184,13 +184,13 @@ describe Api::TodoItemsController do
 
       context 'with invalid params' do
         it 'returns a 422 status' do
-          put :update, params: { todo_list_id: @todo_list.id, id: todo_item.id, todo_item: { description: '' } }, format: :json
+          put :update, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id, todo_item: { description: '' } }, format: :json
 
           expect(response.status).to eq(422)
         end
 
         it 'returns validation errors' do
-          put :update, params: { todo_list_id: @todo_list.id, id: todo_item.id, todo_item: { description: '' } }, format: :json
+          put :update, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id, todo_item: { description: '' } }, format: :json
 
           body = JSON.parse(response.body)
 
@@ -201,13 +201,13 @@ describe Api::TodoItemsController do
 
     context 'when the parent todo list does not exist' do
       it 'returns a 404 status' do
-        put :update, params: { todo_list_id: 0, id: todo_item.id, todo_item: { description: 'Updated' } }, format: :json
+        put :update, params: { todo_list_id: 0, id: todo_item.external_id, todo_item: { description: 'Updated' } }, format: :json
 
         expect(response.status).to eq(404)
       end
 
       it 'returns an error message' do
-        put :update, params: { todo_list_id: 0, id: todo_item.id, todo_item: { description: 'Updated' } }, format: :json
+        put :update, params: { todo_list_id: 0, id: todo_item.external_id, todo_item: { description: 'Updated' } }, format: :json
 
         body = JSON.parse(response.body)
 
@@ -217,13 +217,13 @@ describe Api::TodoItemsController do
 
     context 'when the item does not exist' do
       it 'returns a 404 status' do
-        put :update, params: { todo_list_id: @todo_list.id, id: 0, todo_item: { description: 'Updated' } }, format: :json
+        put :update, params: { todo_list_id: @todo_list.external_id, id: 0, todo_item: { description: 'Updated' } }, format: :json
 
         expect(response.status).to eq(404)
       end
 
       it 'returns an error message' do
-        put :update, params: { todo_list_id: @todo_list.id, id: 0, todo_item: { description: 'Updated' } }, format: :json
+        put :update, params: { todo_list_id: @todo_list.external_id, id: 0, todo_item: { description: 'Updated' } }, format: :json
 
         body = JSON.parse(response.body)
 
@@ -237,13 +237,13 @@ describe Api::TodoItemsController do
 
     context 'when the parent todo list exists and the item exists' do
       it 'returns a success code' do
-        delete :destroy, params: { todo_list_id: @todo_list.id, id: todo_item.id }, format: :json
+        delete :destroy, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id }, format: :json
 
         expect(response.status).to eq(200)
       end
 
       it 'returns a success message' do
-        delete :destroy, params: { todo_list_id: @todo_list.id, id: todo_item.id }, format: :json
+        delete :destroy, params: { todo_list_id: @todo_list.external_id, id: todo_item.external_id }, format: :json
 
         body = JSON.parse(response.body)
 
@@ -253,13 +253,13 @@ describe Api::TodoItemsController do
 
     context 'when the parent todo list does not exist' do
       it 'returns a 404 status' do
-        delete :destroy, params: { todo_list_id: 0, id: todo_item.id }, format: :json
+        delete :destroy, params: { todo_list_id: 0, id: todo_item.external_id }, format: :json
 
         expect(response.status).to eq(404)
       end
 
       it 'returns an error message' do
-        delete :destroy, params: { todo_list_id: 0, id: todo_item.id }, format: :json
+        delete :destroy, params: { todo_list_id: 0, id: todo_item.external_id }, format: :json
 
         body = JSON.parse(response.body)
 
@@ -269,7 +269,7 @@ describe Api::TodoItemsController do
 
     context 'when the item does not exist' do
       it 'returns a 404 status' do
-        delete :destroy, params: { todo_list_id: @todo_list.id, id: 0 }, format: :json
+        delete :destroy, params: { todo_list_id: @todo_list.external_id, id: 0 }, format: :json
 
         expect(response.status).to eq(404)
       end
@@ -281,13 +281,13 @@ describe Api::TodoItemsController do
 
     context 'when the parent todo list exists' do
       it 'returns a success code' do
-        post :complete_all, params: { todo_list_id: @todo_list.id }, format: :json
+        post :complete_all, params: { todo_list_id: @todo_list.external_id }, format: :json
 
         expect(response.status).to eq(200)
       end
 
       it 'marks all items as completed' do
-        post :complete_all, params: { todo_list_id: @todo_list.id }, format: :json
+        post :complete_all, params: { todo_list_id: @todo_list.external_id }, format: :json
 
         items = JSON.parse(response.body)
 

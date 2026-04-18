@@ -29,8 +29,8 @@ describe TodoListsController do
         expect(response).to redirect_to(todo_list_path(TodoList.last))
       end
 
-      it 'calls SyncCreateListService' do
-        expect(SyncCreateListService).to receive(:call).with(an_instance_of(TodoList))
+      it 'calls TodoLists::SyncCreateService' do
+        expect(TodoLists::SyncCreateService).to receive(:call).with(an_instance_of(TodoList))
 
         post :create, params: { todo_list: { name: 'Groceries' } }
       end
@@ -49,8 +49,8 @@ describe TodoListsController do
         expect(response).to render_template(:new)
       end
 
-      it 'does not call SyncCreateListService' do
-        expect(SyncCreateListService).not_to receive(:call)
+      it 'does not call TodoLists::SyncCreateService' do
+        expect(TodoLists::SyncCreateService).not_to receive(:call)
 
         post :create, params: { todo_list: { name: '' } }
       end
@@ -102,8 +102,8 @@ describe TodoListsController do
           expect(response).to redirect_to(todo_list_path(@todo_list))
         end
 
-        it 'calls SyncUpdateListService' do
-          expect(SyncUpdateListService).to receive(:call).with(@todo_list)
+        it 'calls TodoLists::SyncUpdateService' do
+          expect(TodoLists::SyncUpdateService).to receive(:call).with(@todo_list)
 
           patch :update, params: { id: @todo_list.id, todo_list: { name: 'Updated' } }
         end
@@ -122,8 +122,8 @@ describe TodoListsController do
           expect(response).to render_template(:edit)
         end
 
-        it 'does not call SyncUpdateListService' do
-          expect(SyncUpdateListService).not_to receive(:call)
+        it 'does not call TodoLists::SyncUpdateService' do
+          expect(TodoLists::SyncUpdateService).not_to receive(:call)
 
           patch :update, params: { id: @todo_list.id, todo_list: { name: '' } }
         end
@@ -147,8 +147,8 @@ describe TodoListsController do
         expect(response).to redirect_to(todo_lists_path)
       end
 
-      it 'calls SyncDeleteListService' do
-        expect(SyncDeleteListService).to receive(:call).with(@todo_list.id)
+      it 'calls TodoLists::SyncDeleteService' do
+        expect(TodoLists::SyncDeleteService).to receive(:call).with(@todo_list.external_id)
 
         delete :destroy, params: { id: @todo_list.id }, format: :html
       end

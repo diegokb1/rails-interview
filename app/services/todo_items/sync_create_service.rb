@@ -5,7 +5,7 @@ module TodoItems
       json_item["source_id"] = 'dk-sys'
       
       json_item = JSON.parse(json_item.to_json)
-      TodoItems::CreateJob.perform_later(todo_item.todo_list.id, json_item)
+      TodoItems::CreateJob.perform_later(todo_item.todo_list.external_id, json_item)
     end
   end
 end

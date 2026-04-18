@@ -29,7 +29,7 @@ RSpec.describe TodoLists::CreateJob, type: :job do
     end
 
     context 'when the API call succeeds' do
-      before { allow(ApiClient::Lists).to receive(:create).and_return(double(status: 200)) }
+      before { allow(ApiClient::Lists).to receive(:create).and_return(double(status: 200, body: { id: 'ext-123' })) }
 
       it 'calls ApiClient.create with the correct arguments' do
         expect(ApiClient::Lists).to receive(:create).with(json_list)

@@ -15,8 +15,8 @@ RSpec.describe TodoItems::SyncUpdateService do
       TodoItems::SyncUpdateService.call(todo_item)
 
       expect(TodoItems::UpdateJob).to have_been_enqueued.with(
-        todo_list.id,
-        todo_item.id,
+        todo_list.external_id,
+        todo_item.external_id,
         { description: todo_item.description, completed: todo_item.completed }
       )
     end

@@ -7,7 +7,7 @@ module TodoLists
       params = JSON.parse(args.first.to_json)
       response = ApiClient::Lists.create(params)
       if response.status == 200
-        TodoList.find(params['id']).update(last_synced: DateTime.now)
+        TodoList.find(params['id']).update(last_synced: DateTime.now, external_id: response.body[:id])
       else
         Rails.logger.error "List create synced failed with params #{params} - error: #{response.errors}"
       end

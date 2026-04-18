@@ -19,7 +19,7 @@ describe Api::TodoListsController do
 
       aggregate_failures 'includes the id and name' do
         expect(todo_lists.count).to eq(1)
-        expect(todo_lists[0].keys).to match_array(['id', 'name', 'last_synced'])
+        expect(todo_lists[0].keys).to match_array(['id', 'name', 'last_synced', 'external_id'])
         expect(todo_lists[0]['id']).to eq(todo_list.id)
         expect(todo_lists[0]['name']).to eq(todo_list.name)
         expect(todo_lists[0]['last_synced']).to eq(todo_list.last_synced)
@@ -126,13 +126,13 @@ describe Api::TodoListsController do
     context 'when the todo list exists' do
       context 'with valid params' do
         it 'returns a 200 status' do
-          patch :update, params: { id: todo_list.id, todo_list: { name: 'Updated' } }, format: :json
+          patch :update, params: { id: todo_list.external_id, todo_list: { name: 'Updated' } }, format: :json
 
           expect(response.status).to eq(200)
         end
 
         it 'returns the updated todo list' do
-          patch :update, params: { id: todo_list.id, todo_list: { name: 'Updated' } }, format: :json
+          patch :update, params: { id: todo_list.external_id, todo_list: { name: 'Updated' } }, format: :json
 
           body = JSON.parse(response.body)
 
@@ -142,13 +142,13 @@ describe Api::TodoListsController do
 
       context 'with invalid params' do
         it 'returns a 422 status' do
-          patch :update, params: { id: todo_list.id, todo_list: { name: '' } }, format: :json
+          patch :update, params: { id: todo_list.external_id, todo_list: { name: '' } }, format: :json
 
           expect(response.status).to eq(422)
         end
 
         it 'returns validation errors' do
-          patch :update, params: { id: todo_list.id, todo_list: { name: '' } }, format: :json
+          patch :update, params: { id: todo_list.external_id, todo_list: { name: '' } }, format: :json
 
           body = JSON.parse(response.body)
 
@@ -179,13 +179,13 @@ describe Api::TodoListsController do
 
     context 'when the todo list exists' do
       it 'returns a 200 status' do
-        delete :destroy, params: { id: todo_list.id }, format: :json
+        delete :destroy, params: { id: todo_list.external_id }, format: :json
 
         expect(response.status).to eq(200)
       end
 
       it 'returns a success message' do
-        delete :destroy, params: { id: todo_list.id }, format: :json
+        delete :destroy, params: { id: todo_list.external_id }, format: :json
 
         body = JSON.parse(response.body)
 

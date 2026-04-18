@@ -36,14 +36,14 @@ RSpec.describe TodoLists::SyncJob, type: :job do
       let(:external_lists) do
         [
           {
-            'id' => stale_list_1.id,
+            'id' => stale_list_1.external_id,
             'name' => 'Updated Name',
             'todo_items' => [
-              { 'id' => item_1.id, 'description' => 'Updated desc', 'completed' => true }
+              { 'id' => item_1.external_id, 'description' => 'Updated desc', 'completed' => true }
             ]
           },
           {
-            'id' => stale_list_2.id,
+            'id' => stale_list_2.external_id,
             'name' => stale_list_2.name,
             'todo_items' => []
           }

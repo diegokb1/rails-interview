@@ -59,7 +59,7 @@ class TodoItemsController < ApplicationController
     @todo_item = @todo_list.todo_items.find(params[:id])
     @todo_item.destroy
 
-    TodoItems::SyncDeleteService.call(@todo_item.todo_list.id, @todo_item.id)
+    TodoItems::SyncDeleteService.call(@todo_item.todo_list.external_id, @todo_item.external_id)
     
     respond_to do |format|
       format.turbo_stream

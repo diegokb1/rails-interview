@@ -15,13 +15,13 @@ module TodoLists
       end
 
       external_lists = response.parsed_response
-      external_lists_by_id = external_lists.index_by { |l| l["id"] }
+      external_lists_by_ext_id = external_lists.index_by { |l| l["id"] }
       now = DateTime.now
 
       external_lists.each { |external_list| sync_list_create(external_list, now) }
 
       stale_lists.each do |list|
-        external_list = external_lists_by_id[list.id]
+        external_list = external_lists_by_ext_id[list.external_id]
         external_list ? sync_list_update(list, external_list, now) : delete_list(list)
       end
     end
@@ -29,66 +29,68 @@ module TodoLists
     private
 
     def sync_list_create(external_list, now)
-      list_id = external_list["id"]
-      local_item_ids = TodoItem.where(todo_list_id: list_id).pluck(:id)
+      ext_id = external_list["id"]
+      local_list = TodoList.find_by(external_id: ext_id)
 
-      unless TodoList.exists?(list_id)
-        list = TodoList.create(id: list_id, name: external_list["name"], last_synced: now)
-        unless list.persisted?
-          Rails.logger.error "Failed to create list id=#{list_id}"
+      unless local_list
+        local_list = TodoList.create(external_id: ext_id, name: external_list["name"], last_synced: now)
+        unless local_list.persisted?
+          Rails.logger.error "Failed to create list external_id=#{ext_id}"
           return
         end
       end
 
+      local_item_ext_ids = local_list.todo_items.pluck(:external_id)
+
       (external_list["todo_items"] || []).each do |external_item|
-        sync_item_create(external_item, list_id, local_item_ids, now)
+        sync_item_create(external_item, local_list, local_item_ext_ids, now)
       end
     end
 
     def sync_list_update(list, external_list, now)
       unless list.update_columns(name: external_list["name"], last_synced: now)
-        Rails.logger.error "Failed to update list id=#{list.id}"
+        Rails.logger.error "Failed to update list external_id=#{list.external_id}"
       end
 
-      external_items_by_id = (external_list["todo_items"] || []).index_by { |i| i["id"] }
+      external_items_by_ext_id = (external_list["todo_items"] || []).index_by { |i| i["id"] }
 
       list.todo_items.each do |item|
-        external_item = external_items_by_id[item.id]
-        external_item ? sync_item_update(item, external_item, list.id, now) : delete_item(item, list.id)
+        external_item = external_items_by_ext_id[item.external_id]
+        external_item ? sync_item_update(item, external_item, now) : delete_item(item)
       end
     end
 
     def delete_list(list)
       list.destroy
-      Rails.logger.error "Failed to delete list id=#{list.id}" if list.persisted?
+      Rails.logger.error "Failed to delete list external_id=#{list.external_id}" if list.persisted?
     end
 
-    def sync_item_create(external_item, list_id, local_item_ids, now)
-      return if local_item_ids.include?(external_item["id"])
+    def sync_item_create(external_item, list, local_item_ext_ids, now)
+      return if local_item_ext_ids.include?(external_item["id"])
 
       item = TodoItem.create(
-        id: external_item["id"],
-        todo_list_id: list_id,
+        external_id: external_item["id"],
+        todo_list: list,
         description: external_item["description"],
         completed: external_item["completed"],
         last_synced: now
       )
-      Rails.logger.error "Failed to create item id=#{external_item["id"]} for list id=#{list_id}" unless item.persisted?
+      Rails.logger.error "Failed to create item external_id=#{external_item["id"]} for list external_id=#{list.external_id}" unless item.persisted?
     end
 
-    def sync_item_update(item, external_item, list_id, now)
+    def sync_item_update(item, external_item, now)
       unless item.update_columns(
         description: external_item["description"],
         completed: external_item["completed"],
         last_synced: now
       )
-        Rails.logger.error "Failed to update item id=#{item.id} for list id=#{list_id}"
+        Rails.logger.error "Failed to update item external_id=#{item.external_id}"
       end
     end
 
-    def delete_item(item, list_id)
+    def delete_item(item)
       item.destroy
-      Rails.logger.error "Failed to delete item id=#{item.id} for list id=#{list_id}" if item.persisted?
+      Rails.logger.error "Failed to delete item external_id=#{item.external_id}" if item.persisted?
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe SyncCreateListService do
+RSpec.describe TodoLists::SyncCreateService do
   include ActiveJob::TestHelper
 
   let(:todo_list) { FactoryBot.create(:todo_list) }
@@ -19,11 +19,11 @@ RSpec.describe SyncCreateListService do
 
   describe '.call' do
     it 'enqueues a TodoLists::CreateJob' do
-      expect { SyncCreateListService.call(todo_list) }.to have_enqueued_job(TodoLists::CreateJob)
+      expect { TodoLists::SyncCreateService.call(todo_list) }.to have_enqueued_job(TodoLists::CreateJob)
     end
 
     it 'enqueues the job with the correct payload' do
-      SyncCreateListService.call(todo_list)
+      TodoLists::SyncCreateService.call(todo_list)
 
       expect(TodoLists::CreateJob).to have_been_enqueued.with(hash_including(expected_payload))
     end

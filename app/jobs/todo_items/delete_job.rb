@@ -8,7 +8,7 @@ module TodoItems
       item_id = args.last
       response = ApiClient::Items.destroy(list_id, item_id)
       unless response.status == 200
-        Rails.logger.error "Item delete sync failed for id #{item_id} - error: #{response.errors}"
+        Rails.logger.error "Item delete sync failed for external id #{item_id} - error: #{response.errors}"
       end
     end
   end

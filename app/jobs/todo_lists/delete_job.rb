@@ -7,7 +7,7 @@ module TodoLists
       list_id = args.first
       response = ApiClient::Lists.destroy(list_id)
       unless response.status == 200
-        Rails.logger.error "List delete sync failed for id #{list_id} - error: #{response.errors}"
+        Rails.logger.error "List delete sync failed for exteral id #{list_id} - error: #{response.errors}"
       end
     end
   end
